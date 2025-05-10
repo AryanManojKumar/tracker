@@ -71,35 +71,58 @@
     <div class="task"><input type="checkbox" id="task5" /><label for="task5">Unacademy Lecture 3</label></div>
     <div class="task"><input type="checkbox" id="task6" /><label for="task6">Maths Self-Study</label></div>
     <div class="task"><input type="checkbox" id="task7" /><label for="task7">Unacademy Lecture 4</label></div>
-    <div class="task"><input type="checkbox" id="task8" /><label for="task8">Revision and Mocks topic wise</label></div>
+    <div class="task"><input type="checkbox" id="task8" /><label for="task8">Revision / mocks topic wise</label></div>
 
     <button class="reset-btn" onclick="resetChecklist()">Reset Checklist</button>
   </div>
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
   <script>
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCsAF1mARmxbCzrC8oeBfqfT42eO3hXAIQ",
+      authDomain: "cds-checklist.firebaseapp.com",
+      databaseURL: "https://cds-checklist-default-rtdb.asia-southeast1.firebasedatabase.app", // ✅ Add this!
+      projectId: "cds-checklist",
+      storageBucket: "cds-checklist.firebasestorage.app",
+      messagingSenderId: "228812724407",
+      appId: "1:228812724407:web:926c00ea1eaf1c39a85532",
+      measurementId: "G-NZJJRTN716"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const tasks = document.querySelectorAll('input[type="checkbox"]');
 
-    // Load saved state
+    // Load saved state from Firebase
     window.onload = () => {
-      tasks.forEach((task, index) => {
-        const saved = localStorage.getItem(`task-${index}`);
-        if (saved === 'true') {
-          task.checked = true;
-        }
+      db.ref('checklist').once('value', snapshot => {
+        const data = snapshot.val() || {};
+        tasks.forEach(task => {
+          if (data[task.id] !== undefined) {
+            task.checked = data[task.id];
+          }
+        });
       });
     };
 
-    // Save state on change
-    tasks.forEach((task, index) => {
+    // Save state to Firebase on change
+    tasks.forEach(task => {
       task.addEventListener('change', () => {
-        localStorage.setItem(`task-${index}`, task.checked);
+        db.ref('checklist/' + task.id).set(task.checked);
       });
     });
 
+    // Reset checklist
     function resetChecklist() {
-      tasks.forEach((task, index) => {
+      tasks.forEach(task => {
         task.checked = false;
-        localStorage.removeItem(`task-${index}`);
+        db.ref('checklist/' + task.id).set(false);
       });
     }
   </script>
