@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CDS Daily Checklist</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f8f9fa, #e0e0e0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .subhead {
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+      color: #777;
+    }
+    .task {
+      margin: 15px 0;
+      text-align: left;
+    }
+    label {
+      font-size: 1rem;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+    .reset-btn {
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #e63946;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .reset-btn:hover {
+      background-color: #d62828;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CDS Daily</h1>
+    <div class="subhead">2hr GS | 1hr ENG | 2hr Maths | 4 Lectures</div>
+
+    <div class="task"><input type="checkbox" id="task1" /><label for="task1">Unacademy Lecture 1 (GS)</label></div>
+    <div class="task"><input type="checkbox" id="task2" /><label for="task2">GS Self-Study</label></div>
+    <div class="task"><input type="checkbox" id="task3" /><label for="task3">Unacademy Lecture 2</label></div>
+    <div class="task"><input type="checkbox" id="task4" /><label for="task4">English Practice</label></div>
+    <div class="task"><input type="checkbox" id="task5" /><label for="task5">Unacademy Lecture 3</label></div>
+    <div class="task"><input type="checkbox" id="task6" /><label for="task6">Maths Self-Study</label></div>
+    <div class="task"><input type="checkbox" id="task7" /><label for="task7">Unacademy Lecture 4</label></div>
+    <div class="task"><input type="checkbox" id="task8" /><label for="task8">Self Study</label></div>
+
+    <button class="reset-btn" onclick="resetChecklist()">Reset Checklist</button>
+  </div>
+
+  <script>
+    const tasks = document.querySelectorAll('input[type="checkbox"]');
+
+    // Load saved state
+    window.onload = () => {
+      tasks.forEach((task, index) => {
+        const saved = localStorage.getItem(`task-${index}`);
+        if (saved === 'true') {
+          task.checked = true;
+        }
+      });
+    };
+
+    // Save state on change
+    tasks.forEach((task, index) => {
+      task.addEventListener('change', () => {
+        localStorage.setItem(`task-${index}`, task.checked);
+      });
+    });
+
+    function resetChecklist() {
+      tasks.forEach((task, index) => {
+        task.checked = false;
+        localStorage.removeItem(`task-${index}`);
+      });
+    }
+  </script>
+</body>
+</html>
