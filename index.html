@@ -57,6 +57,15 @@
     .reset-btn:hover {
       background-color: #d62828;
     }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      resize: vertical;
+    }
   </style>
 </head>
 <body>
@@ -73,6 +82,11 @@
     <div class="task"><input type="checkbox" id="task7" /><label for="task7">Unacademy Lecture 4</label></div>
     <div class="task"><input type="checkbox" id="task8" /><label for="task8">Revision / mocks topic wise</label></div>
 
+    <div class="task">
+      <label for="notes">Topics Covered Today:</label><br />
+      <textarea id="notes" rows="6" placeholder="Write down what you covered today..."></textarea>
+    </div>
+
     <button class="reset-btn" onclick="resetChecklist()">Reset Checklist</button>
   </div>
 
@@ -85,7 +99,7 @@
     const firebaseConfig = {
       apiKey: "AIzaSyCsAF1mARmxbCzrC8oeBfqfT42eO3hXAIQ",
       authDomain: "cds-checklist.firebaseapp.com",
-      databaseURL: "https://cds-checklist-default-rtdb.asia-southeast1.firebasedatabase.app", // ✅ Add this!
+      databaseURL: "https://cds-checklist-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "cds-checklist",
       storageBucket: "cds-checklist.firebasestorage.app",
       messagingSenderId: "228812724407",
@@ -98,6 +112,7 @@
     const db = firebase.database();
 
     const tasks = document.querySelectorAll('input[type="checkbox"]');
+    const notesField = document.getElementById('notes');
 
     // Load saved state from Firebase
     window.onload = () => {
@@ -108,22 +123,32 @@
             task.checked = data[task.id];
           }
         });
+        if (data.notes) {
+          notesField.value = data.notes;
+        }
       });
     };
 
-    // Save state to Firebase on change
+    // Save checkbox state to Firebase
     tasks.forEach(task => {
       task.addEventListener('change', () => {
         db.ref('checklist/' + task.id).set(task.checked);
       });
     });
 
-    // Reset checklist
+    // Save notes to Firebase on input
+    notesField.addEventListener('input', () => {
+      db.ref('checklist/notes').set(notesField.value);
+    });
+
+    // Reset checklist and notes
     function resetChecklist() {
       tasks.forEach(task => {
         task.checked = false;
         db.ref('checklist/' + task.id).set(false);
       });
+      notesField.value = '';
+      db.ref('checklist/notes').set('');
     }
   </script>
 </body>
